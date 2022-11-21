@@ -1,4 +1,5 @@
 import { basename, dirname } from "path";
+import "dotenv/config";
 
 export async function input(fileUrl, year = basename(dirname(fileUrl))) {
   return await fetch(
