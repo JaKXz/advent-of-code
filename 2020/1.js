@@ -11,7 +11,7 @@ test("input exports a function to download input", () => {
   assert.instance(input("1.js"), Promise);
 });
 
-test("input downloads the input for the current day", async () => {
+test("input downloads the input for the current day", () => {
   assert.type(data, "string");
 });
 

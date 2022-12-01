@@ -1,12 +1,15 @@
-import { basename, dirname } from "path";
-import "dotenv/config";
+import { basename, dirname } from "node:path";
+import { writeFileSync, readFileSync, existsSync } from "node:fs";
 
 export async function input(fileUrl, year = basename(dirname(fileUrl))) {
-  return await fetch(
-    `https://adventofcode.com/${year}/day/${basename(fileUrl).replace(
-      ".js",
-      ""
-    )}/input`,
+  const day = basename(fileUrl).replace(".js", "");
+  const filePath = `../${year}/${day}.txt`;
+  if (existsSync(filePath)) {
+    return readFileSync(filePath).toString();
+  }
+
+  const download = await fetch(
+    `https://adventofcode.com/${year}/day/${day}/input`,
     {
       headers: {
         cookie: `session=${
@@ -15,7 +18,11 @@ export async function input(fileUrl, year = basename(dirname(fileUrl))) {
         }`,
       },
     }
-  )
-    .then((res) => res.text())
-    .then((text) => text.trim());
+  );
+
+  const result = (await download.text()).trim();
+  if (download.ok) {
+    writeFileSync(filePath, result);
+  }
+  return result;
 }
