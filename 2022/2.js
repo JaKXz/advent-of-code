@@ -45,21 +45,12 @@ test("sums the scores", () => {
 const secretStrategy = (d = data) =>
   d.split("\n").reduce((acc, line) => {
     const [p1, result] = line.split(" ");
-    const score = scores[p1];
-    switch (result) {
-      case "X":
-        //lose
-        const lost = score === 1 ? "C" : String.fromCharCode(score - 2 + 65);
-        return acc + scores[lost];
-      case "Y":
-        //draw
-        return acc + score + 3;
-      case "Z":
-        //win
-        const winning = score === 3 ? "A" : String.fromCharCode(score + 65);
-        return acc + scores[winning] + 6;
-    }
-    return acc;
+    const played = scores[p1];
+    return {
+      X: acc + (played === 1 ? 3 : played - 1),
+      Y: acc + played + 3,
+      Z: acc + 6 + (played === 3 ? 1 : played + 1),
+    }[result];
   }, 0);
 
 test("derive p2 from result and p1", () => {
