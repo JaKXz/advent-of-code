@@ -41,35 +41,36 @@ CrZsJsPPZsGzwwsLwLmpwMDw`),
 
 const parseRucksacksPerThree = (d = data) => {
   const lines = d.split("\n");
-  let elfTeams = [[]];
-  let j = 0;
-  for (let i = 0; i < lines.length; i++) {
+  let acc = 0;
+  for (let i = 0; i < lines.length + 3; i++) {
     if (i > 0 && i % 3 === 0) {
-      ++j;
-      elfTeams[j] = [lines[i]];
-    } else {
-      elfTeams[j].push(lines[i]);
+      acc += lines[i - 3]
+        .split("")
+        .filter((c) => lines[i - 2].includes(c) && lines[i - 1].includes(c))
+        .reduce(
+          (sum, c, j, a) =>
+            a.indexOf(c) !== j
+              ? sum
+              : c.toLowerCase() === c
+              ? sum + c.charCodeAt(0) - 96
+              : sum + c.charCodeAt(0) - 38,
+          0
+        );
     }
   }
-
-  return elfTeams.reduce((acc, [line1, line2, line3]) => {
-    return (
-      acc +
-      line1
-        .split("")
-        .filter((c) => line2.includes(c) && line3.includes(c))
-        .filter((c, i, a) => a.indexOf(c) === i)
-        .reduce((sum, c) => {
-          if (c.toLowerCase() === c) {
-            return sum + c.charCodeAt(0) - 96;
-          }
-          return sum + c.charCodeAt(0) - 38;
-        }, 0)
-    );
-  }, 0);
+  return acc;
 };
 
 test("rucksacks per 3", () => {
+  assert.equal(
+    parseRucksacksPerThree(`vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw`),
+    70
+  );
   assert.equal(parseRucksacksPerThree(), 2752);
 });
 
