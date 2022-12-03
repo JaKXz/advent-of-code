@@ -6,19 +6,6 @@ import { time } from "../shared/timer.js";
 
 const data = await input(import.meta.url);
 
-test("input exports a function to download input", () => {
-  assert.type(input, "function");
-  assert.instance(input("1.js"), Promise);
-});
-
-test("input downloads the input for the current day", () => {
-  assert.type(data, "string");
-});
-
-test("input data is trimmed", () => {
-  assert.is(data, data.trim());
-});
-
 const getNumbersFiltered = (d = data) =>
   d
     .split("\n")
