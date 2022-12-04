@@ -17,13 +17,7 @@ const parseLineItems = (d = data) =>
       partA
         .split("")
         .filter((c) => partB.includes(c))
-        .filter((c, i, a) => a.indexOf(c) === i)
-        .reduce((sum, c) => {
-          if (c.toLowerCase() === c) {
-            return sum + c.charCodeAt(0) - 96;
-          }
-          return sum + c.charCodeAt(0) - 38;
-        }, 0)
+        .reduce(prioritySummation, 0)
     );
   }, 0);
 
@@ -43,13 +37,12 @@ CrZsJsPPZsGzwwsLwLmpwMDw`),
 function parseRucksacksPerTeamSize(d = data, teamSize = 3) {
   const rucksacks = d.split("\n");
   if (rucksacks.length % teamSize !== 0) console.warn("Uneven team size");
+  const checks = range(2, teamSize);
   let acc = 0;
   for (let i = rucksacks.length; i >= teamSize; i -= teamSize) {
     acc += rucksacks[i - 1]
       .split("")
-      .filter((badge) =>
-        range(2, teamSize).every((j) => rucksacks[i - j].includes(badge))
-      )
+      .filter((badge) => checks.every((j) => rucksacks[i - j].includes(badge)))
       .reduce(prioritySummation, 0);
   }
   return acc;
