@@ -13,10 +13,7 @@ const countPairsFullyContained = (d = data) =>
   }, 0);
 
 function parseLineForBoundaries(line) {
-  const [left, right] = line.split(",");
-  const [a, b] = left.split("-");
-  const [c, d] = right.split("-");
-  return [a, b, c, d].map(Number);
+  return line.replace(",", "-").split("-").map(Number);
 }
 
 test("part 1", () => {
