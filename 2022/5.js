@@ -14,7 +14,7 @@ const initialStacks = (d = data, height = 9) =>
       if (!result) return acc;
       return acc.map((stack, i) => stack + result[i].replaceAll(/\W/g, ""));
     },
-    range(1, height).map(() => [])
+    range(1, height).map(() => "")
   );
 
 const procedure = (d = data, start = 10) => d.slice(start);
