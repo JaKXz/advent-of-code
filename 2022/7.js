@@ -6,26 +6,30 @@ import { time } from "../shared/timer.js";
 
 const data = await input(import.meta.url);
 
+const RELEVANT_FILE_TREE_INFO = /(?<size>^\d+).*$|^\$ cd (?<dir>\w+|\.+)$/;
+
 function parseLines(d = data) {
   const lines = d.split("\n");
   let result = {};
-  let currentPath = "";
-  for (let i = 0; i < lines.length; i++) {
+  let currentPath = "/";
+  for (let i = 1; i < lines.length; i++) {
     const line = lines[i];
-    const testForSize = line.match(/(?<size>\d+) \w+/);
     const pathSplit = currentPath.split("/");
-    if (line === "$ cd ..") {
+
+    const {
+      groups: { size, dir },
+    } = line.match(RELEVANT_FILE_TREE_INFO) ?? { groups: {} };
+    if (dir === "..") {
       currentPath = `${pathSplit.slice(0, pathSplit.length - 2).join("/")}/`;
-    } else if (line.startsWith("$ cd")) {
-      const match = line.match(/^\$ cd (?<dir>\w+)$/);
-      currentPath += match ? `${match.groups.dir}/` : "/";
-    } else if (testForSize && testForSize.groups.size) {
+    } else if (dir != null) {
+      currentPath += `${dir}/`;
+    } else if (size != null) {
       for (let j = 0; j < pathSplit.length - 1; j++) {
         const path = `${pathSplit.slice(0, j + 1).join("/")}/`;
         if (result[path]) {
-          result[path] += Number(testForSize.groups.size);
+          result[path] += Number(size);
         } else {
-          result[path] = Number(testForSize.groups.size);
+          result[path] = Number(size);
         }
       }
     }
@@ -71,6 +75,7 @@ test("part 1 example", () => {
 test("part 1", () => {
   assert.equal(getTotalEligibleDirsSizes(), 1886043);
 });
+
 function findDirToDelete(parsed = parseLines()) {
   const sorted = Object.entries(parsed).sort((a, b) => b[1] - a[1]);
   const SPACE_USED = sorted[0][1];
