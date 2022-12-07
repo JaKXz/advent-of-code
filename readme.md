@@ -11,5 +11,6 @@ pnpm install
 pnpm test
 ```
 
-Proceed at your own risk:
-If you want to use your own session replace the constant in the `download-input` file or add a .env with the session token from the network tab when you go to https://adventofcode.com/${year}/day/${day} :)
+For your actual submissions you'll want to use your own session by replacing the constant in the `shared/download-input.js` file.
+
+> **Note**: you can also try a `.env` file with [`bun`](https://github.com/oven-sh/bun#install) instead of `pnpm` if you don't want to have to commit your token.

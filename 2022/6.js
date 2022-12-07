@@ -8,7 +8,7 @@ const data = await input(import.meta.url);
 
 function parseSignalStartLocation(d = data, distinct = 4) {
   const chars = d.split("");
-  for (let i = 0; i < chars.length; i++) {
+  for (let i = 1; i < chars.length; i++) {
     const unique = chars
       .slice(i, i + distinct)
       .filter((c, j, a) => a.indexOf(c) === j);
