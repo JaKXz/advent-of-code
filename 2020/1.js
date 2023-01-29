@@ -28,10 +28,6 @@ test("correct partOne", () => {
   assert.is(partOne(), 802011);
 });
 
-test("is fast", async () => {
-  console.log(await time(partOne));
-});
-
 function partTwo() {
   const numbers = getNumbersFiltered();
 
@@ -54,6 +50,7 @@ test("correct partTwo", () => {
 });
 
 test("is fast", async () => {
+  console.log(await time(partOne));
   console.log(await time(partTwo));
 });
 
