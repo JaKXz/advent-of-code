@@ -1,16 +1,21 @@
 # `advent-of-code` test harness
 
 Requires the latest version of node.
-Getting started a system with [`brew`](https://brew.sh):
+On a system with [`brew`](https://brew.sh) (run the equivalent for your package manager):
 
 ```sh
-brew install node pnpm
+brew tap oven-sh/bun
+brew install node bun
 npx degit jakxz/advent-of-code
 cd advent-of-code
-pnpm install
-pnpm test
+bun install
+bun run test
 ```
 
-For your actual submissions you'll want to use your own session by replacing the constant in the `shared/download-input.js` file.
+> **Note**: you need to add an `.env` file, with contents like:
 
-> **Note**: you can also try a `.env` file with [`bun`](https://github.com/oven-sh/bun#install) instead of `pnpm` if you don't want to have to commit your token.
+```
+AOC_SESSION=<your_token>
+```
+
+> which you can get from your network session on adventofcode.com
