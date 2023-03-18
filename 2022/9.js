@@ -44,49 +44,34 @@ function trackTailVisits(d = data, knots = 1) {
           break;
       }
       for (let k = 0; k < knots; k++) {
-        const prev = k === 0 ? head : tail[k - 1];
-        let knot = tail[k];
-        const dx = Math.abs(prev[0] - knot[0]);
-        const dy = Math.abs(prev[1] - knot[1]);
+        const leader = k === 0 ? head : tail[k - 1];
+        let follower = tail[k];
 
-        if ((dx > 1 && dy >= 1) || (dx >= 1 && dy > 1)) {
-          if (dy > dx) {
-            knot[0] = prev[0];
-            knot[1] = moveOneBehind(prev[1], dir);
-          } else {
-            knot[0] = moveOneBehind(prev[0], dir);
-            knot[1] = prev[1];
-          }
-          if (k === knots - 1) {
-            result.add(knot.toString());
-          }
-        } else if (dx > 1) {
-          knot[0] = moveOneBehind(prev[0], dir);
-          if (k === knots - 1) {
-            result.add(knot.toString());
-          }
-        } else if (dy > 1) {
-          knot[1] = moveOneBehind(prev[1], dir, 1);
-          if (k === knots - 1) {
-            result.add(knot.toString());
-          }
+        const dx = leader[0] - follower[0];
+        const dy = leader[1] - follower[1];
+        const absDx = Math.abs(dx);
+        const absDy = Math.abs(dy);
+
+        if (
+          (absDx > 1 && absDy > 1) ||
+          (absDx === 2 && absDy === 1) ||
+          (absDx === 1 && absDy === 2)
+        ) {
+          follower[0] += dx / absDx;
+          follower[1] += dy / absDy;
+        } else if (absDx === 0 && absDy > 1) {
+          follower[1] += dy / absDy;
+        } else if (absDy === 0 && absDx > 1) {
+          follower[0] += dx / absDx;
+        }
+
+        if (k === knots - 1) {
+          result.add(follower.toString());
         }
       }
-      // console.log({ head, tail: tail[8], move: motions[i] });
     }
   }
   return result.size;
-}
-
-function moveOneBehind(coord, dir) {
-  switch (dir) {
-    case "R":
-    case "U":
-      return coord - 1;
-    case "L":
-    case "D":
-      return coord + 1;
-  }
 }
 
 test("part 1 ex", () => {
@@ -107,9 +92,12 @@ D 10
 L 25
 U 20`.trim();
 
-test.skip("part 2 ex", () => {
-  // assert.equal(trackTailVisits(example, 9), 1);
+test("part 2 ex", () => {
   assert.equal(trackTailVisits(ropeExample, 9), 36);
+});
+
+test("part 2", () => {
+  assert.equal(trackTailVisits(data, 9), 2331);
 });
 
 test("some speed", async () => {
