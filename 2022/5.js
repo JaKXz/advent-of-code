@@ -36,7 +36,7 @@ function run(stacks = initialStacks(), steps = procedure()) {
 
 function determineMove(from, num) {
   const substring = from.substring(0, num);
-  if (this.cranePowerLevel > 9000) {
+  if (this && this.cranePowerLevel > 9000) {
     return substring;
   }
   return substring.split("").reverse().join("");
@@ -70,7 +70,8 @@ test("part 2 crates move in the same order", () => {
 });
 
 test("is fast", async () => {
-  console.log(await time(run.bind({})));
+  console.log(await time(run));
+  console.log(await time(run.bind({ cranePowerLevel: 9001 })));
 });
 
 test.run();
