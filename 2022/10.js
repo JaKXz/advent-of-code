@@ -19,25 +19,27 @@ function calculateSignalStrength(d = data) {
 
     if (addxVal) {
       for (let j = 0; j <= 1; j++) {
-        const cycleIndex = MEASUREMENT_CYCLES.indexOf(cycle);
-        if (cycleIndex > -1) {
-          result += register * MEASUREMENT_CYCLES[cycleIndex];
-        }
+        result += takeCycleMeasurement(cycle, register);
         if (j === 1) {
           register += Number(addxVal);
         }
         cycle++;
       }
     } else {
-      const cycleIndex = MEASUREMENT_CYCLES.indexOf(cycle);
-      if (cycleIndex > -1) {
-        result += register * MEASUREMENT_CYCLES[cycleIndex];
-      }
+      result += takeCycleMeasurement(cycle, register);
       cycle++;
     }
   }
 
   return result;
+}
+
+function takeCycleMeasurement(cycle, register) {
+  const cycleIndex = MEASUREMENT_CYCLES.indexOf(cycle);
+  if (cycleIndex > -1) {
+    return register * MEASUREMENT_CYCLES[cycleIndex];
+  }
+  return 0;
 }
 
 test("part 1 ex", () => {
