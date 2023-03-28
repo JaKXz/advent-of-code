@@ -1,6 +1,8 @@
 import { test } from "uvu";
 import * as assert from "uvu/assert";
 
+import { time } from "../shared/timer.js";
+
 function determinant(strArray: string[]) {
   const cols = strArray.indexOf("<>");
   const rows = strArray.join("").split("<>").length;
@@ -51,9 +53,14 @@ function determinant(strArray: string[]) {
   { strArray: ["1", "2", "3", "<>", "4", "5", "6"], expected: -1 },
   { strArray: ["1", "2", "<>", "3", "4"], expected: -2 },
   { strArray: ["5", "0", "<>", "0", "5"], expected: 25 },
+  {
+    strArray: ["2", "-3", "1", "<>", "2", "0", "-1", "<>", "1", "4", "5"],
+    expected: 49,
+  },
 ].forEach(({ strArray, expected }) => {
-  test(`det(${strArray}) == ${expected}`, () => {
+  test(`det(${strArray}) === ${expected}`, async () => {
     assert.is(determinant(strArray), expected);
+    console.log(await time(determinant.bind(this, strArray)));
   });
 });
 
