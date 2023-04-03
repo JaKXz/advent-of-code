@@ -19,8 +19,8 @@ export async function input(fileUrl, year = basename(dirname(fileUrl))) {
           "github.com/jakxz/advent-of-code by JaKXz@users.noreply.github.com",
       },
     }
-  ).catch((e) => {
-    console.error(e);
+  ).catch((err) => {
+    console.error(err.stack);
     return Response.error();
   });
 
