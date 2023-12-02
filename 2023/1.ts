@@ -59,8 +59,7 @@ function getValues(line: string) {
   } else {
     for (const char of line) {
       temp += char;
-      const key = keys.find((k) => temp.includes(k));
-      const num = key ? nums[key] : Number(vals.find((v) => temp.includes(v)));
+      const num = interpolateNum(keys, vals, temp);
       if (num) {
         first *= num;
         break;
@@ -75,13 +74,17 @@ function getValues(line: string) {
   for (let i = line.length - 1; i > 0; i--) {
     const char = line[i];
     temp = char + temp;
-    const key = keys.find((k) => temp.includes(k));
-    const num = key ? nums[key] : Number(vals.find((v) => temp.includes(v)));
+    const num = interpolateNum(keys, vals, temp);
     if (num) {
       return first + num;
     }
   }
   return first + first / 10;
+}
+
+function interpolateNum(keys, vals, temp) {
+  const key = keys.find((k) => temp.includes(k));
+  return key ? nums[key] : Number(vals.find((v) => temp.includes(v)));
 }
 
 test("ex2, part 2", () => {
