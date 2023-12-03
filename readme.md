@@ -1,6 +1,5 @@
 # `advent-of-code` test harness
 
-Requires the latest version of node.
 On a system with [`brew`](https://brew.sh) (run the equivalent for your package manager):
 
 ```sh
