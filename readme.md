@@ -8,7 +8,7 @@ brew install node bun
 npx degit jakxz/advent-of-code
 cd advent-of-code
 bun install
-bun run test
+bun [--watch] <year>/<day>
 ```
 
 > **Note**: you need to add an `.env` file, with contents like:
