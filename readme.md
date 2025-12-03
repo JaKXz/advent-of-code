@@ -1,12 +1,10 @@
 # `advent-of-code` test harness
 
-On a system with [`brew`](https://brew.sh) (run the equivalent for your package manager):
+On a system with [`mise`](https://mise.jdx.dev/)
 
 ```sh
-brew tap oven-sh/bun
-brew install node bun
-npx degit jakxz/advent-of-code
-cd advent-of-code
+# clone the repo, e.g. npx degit jakxz/advent-of-code && cd $_
+mise install
 bun install
 bun [--watch] <year>/<day>
 ```
