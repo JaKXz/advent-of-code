@@ -11,11 +11,14 @@
     "uvu": "^0.5.6"
   },
   "devDependencies": {
-    "prettier": "^3.7.4",
+    "prettier": "^3.8.1",
     "pretty-quick": "^4.2.2",
     "simple-git-hooks": "^2.13.1"
   },
   "simple-git-hooks": {
     "pre-commit": "npx pretty-quick --staged"
+  },
+  "scripts": {
+    "t": "uvu ."
   }
 }
