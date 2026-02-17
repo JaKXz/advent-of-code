@@ -12,15 +12,15 @@ Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
 Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
 Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green`.split("\n");
 
-function possibleGamesSum(lines: string[]) {
+function possibleGamesSum(lines: string[] = data) {
   const MAX_RED = 12;
   const MAX_GREEN = 13;
   const MAX_BLUE = 14;
 
   return lines.reduce((acc, line, i) => {
     const id = i + 1;
-    const max = lineMaxes(line);
-    if (max.green <= MAX_GREEN && max.blue <= MAX_BLUE && max.red <= MAX_RED) {
+    const { green, red, blue } = lineMaxes(line);
+    if (green <= MAX_GREEN && blue <= MAX_BLUE && red <= MAX_RED) {
       return acc + id;
     }
     return acc;
@@ -36,7 +36,7 @@ function lineMaxes(line: string) {
         acc[colour] = Math.max(Number(num), acc[colour]);
         return acc;
       },
-      { green: 0, red: 0, blue: 0 }
+      { green: 0, red: 0, blue: 0 },
     );
 }
 
@@ -46,13 +46,13 @@ test("ex1 part 1", () => {
 
 test("part 1", async () => {
   assert.is(possibleGamesSum(data), 2617);
-  console.log(await time(possibleGamesSum.bind(this, data)));
+  console.log(await time(possibleGamesSum));
 });
 
-function cubeSetPower(lines: string[]) {
+function cubeSetPower(lines: string[] = data) {
   return lines.reduce((acc, line) => {
-    const max = lineMaxes(line);
-    return acc + max.green * max.red * max.blue;
+    const { green, red, blue } = lineMaxes(line);
+    return acc + green * red * blue;
   }, 0);
 }
 
@@ -62,7 +62,7 @@ test("ex2 part 2", () => {
 
 test("part 2", async () => {
   assert.is(cubeSetPower(data), 59795);
-  console.log(await time(cubeSetPower.bind(this, data)));
+  console.log(await time(cubeSetPower));
 });
 
 test.run();

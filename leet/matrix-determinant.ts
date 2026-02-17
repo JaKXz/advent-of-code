@@ -12,7 +12,7 @@ function determinant(strArray: string[]) {
   }
   const numArray: number[] = strArray.reduce(
     (acc, val) => (val === "<>" ? acc : acc.concat(Number(val))),
-    []
+    [],
   );
 
   let matrix: number[][] = new Array(rows)
@@ -37,7 +37,7 @@ function determinant(strArray: string[]) {
       for (let i = 0; i < matrix.length; i++) {
         let subMatrix = [];
         for (let j = 1; j < matrix.length; j++) {
-          subMatrix[j - 1] = matrix[j].filter((val, index) => index !== i);
+          subMatrix[j - 1] = matrix[j].filter((_, index) => index !== i);
         }
         det +=
           (i % 2 === 0 ? 1 : -1) * matrix[0][i] * calcDeterminant(subMatrix);
