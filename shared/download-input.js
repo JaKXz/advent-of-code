@@ -15,10 +15,8 @@ export async function input(fileUrl, year = basename(dirname(fileUrl))) {
     {
       headers: {
         cookie: `session=${process.env.AOC_SESSION}`,
-        "User-Agent":
-          "github.com/jakxz/advent-of-code by JaKXz@users.noreply.github.com",
       },
-    }
+    },
   ).catch((err) => {
     console.error(err.stack);
     return Response.error();
