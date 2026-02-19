@@ -47,7 +47,7 @@ test("p1", async () => {
 });
 
 test("p2 example", () => {
-  const adjacencies = getAdjacencies(EX, "?<symbol>\\*");
+  const adjacencies = getAdjacencies(EX, "\\*");
   const sum = adjacencies.reduce((acc, vals) => {
     if (vals.length !== 2) {
       return acc;
@@ -59,7 +59,7 @@ test("p2 example", () => {
 });
 
 test("p2", async () => {
-  const adjacencies = getAdjacencies(data, "?<symbol>\\*");
+  const adjacencies = getAdjacencies(data, "\\*");
   const sum = adjacencies.reduce((acc, vals) => {
     if (vals.length !== 2) {
       return acc;
@@ -68,30 +68,34 @@ test("p2", async () => {
   }, 0);
 
   assert.is(sum, 93994191);
-  console.log(await time(getAdjacencies.bind(this, data, "?<symbol>\\*")));
+  console.log(await time(getAdjacencies.bind(this, data, "\\*")));
 });
 
 type Coord = readonly [number, number];
+type Pair = [Coord, string];
 
-function getAdjacencies(
-  lines = data,
-  symbolPattern = "?<symbol>[^.0-9]",
-): number[][] {
-  const nums: [Coord, string][] = [];
-  const symbols: [Coord, string][] = [];
-  const matchPattern = new RegExp(`(${symbolPattern})|(?<num>\\d+)`, "g");
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    [...line.matchAll(matchPattern)].forEach((match) => {
-      const coord = [i, match.index] as const;
-      if (match.groups.symbol) {
-        symbols.push([coord, match[0]]);
-      }
-      if (match.groups.num) {
-        nums.push([coord, match[0]]);
-      }
-    });
-  }
+function getAdjacencies(lines = data, symbolPattern = "[^.0-9]"): number[][] {
+  const matchPattern = new RegExp(
+    `(?<symbol>${symbolPattern})|(?<num>\\d+)`,
+    "g",
+  );
+
+  const { nums, symbols } = lines.reduce<{ nums: Pair[]; symbols: Pair[] }>(
+    (acc, line, i) => {
+      line.matchAll(matchPattern).forEach((match) => {
+        const coord = [i, match.index] as const;
+        if (match.groups.symbol) {
+          acc.symbols.push([coord, match[0]]);
+        }
+        if (match.groups.num) {
+          acc.nums.push([coord, match[0]]);
+        }
+      });
+      return acc;
+    },
+    { nums: [], symbols: [] },
+  );
+
   const adjacencies: number[][] = [];
   symbols.forEach(([[x, y]], id) => {
     adjacencies[id] = [];
