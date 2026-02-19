@@ -6,56 +6,6 @@ import { time } from "../shared/timer.js";
 
 const data: string[] = (await input(import.meta.url)).split("\n");
 
-function partsSum(acc: number, line: string, i: number, arr: string[]) {
-  [...line.matchAll(/\.?(\d+)\.?/g)]
-    .flatMap((match) => ({
-      num: match[1],
-      index: match[0].startsWith(".") ? match.index + 1 : match.index,
-    }))
-    .forEach((match) => {
-      let lines: string[] = [];
-      if (i !== 0) {
-        lines.push(arr[i - 1]);
-      }
-      lines.push(line);
-      if (i !== arr.length - 1) {
-        lines.push(arr[i + 1]);
-      }
-      const offset = match.num.length - 1;
-      const coord = [i, match.index] as const;
-      const isAdjacent = isNumCoordAdjacent(coord, offset, lines);
-
-      if (isAdjacent) {
-        acc += Number(match.num);
-      }
-    });
-
-  return acc;
-}
-
-function isNumCoordAdjacent(
-  [_, y]: readonly [number, number],
-  offset: number,
-  lines: string[],
-) {
-  for (let i = 0; i < lines.length; i++) {
-    for (let j = 0; j < lines[i].length; j++) {
-      const symbol = lines[i][j];
-      if (symbol !== "." && /\D/.test(symbol)) {
-        let delta = Math.abs(j - y);
-        if (delta === 0 || delta === 1) {
-          return true;
-        }
-        delta = Math.abs(j - (y + offset));
-        if (delta === 0 || delta === 1) {
-          return true;
-        }
-      }
-    }
-  }
-  return false;
-}
-
 const EX = `
 467..114..
 ...*......
@@ -70,37 +20,93 @@ const EX = `
   .trim()
   .split("\n");
 
-test("isAdjacent", () => {
-  assert.is(isNumCoordAdjacent([0, 0], 3, ["467..114..", "...*......"]), true);
-});
-
-test("not adjacent", () => {
-  assert.is(isNumCoordAdjacent([0, 5], 3, ["467..114..", "...*......"]), true);
-});
-
-test("part number without leading .", () => {
-  assert.is(
-    isNumCoordAdjacent([1, 63], 3, [
-      ".854...........................................................................362...........271...732........838.........24................",
-      "...*.............................117*...........459........767*648....#.........*...................................$...&..=................",
-      "....970.........368.124.+............57................653...........723.....366....*443..60.........536....441....45..879.....789...*......",
-    ]),
-    true,
-  );
-});
-
 test("p1 example", () => {
   // each line may have symbols
   // check for numbers starting near those indeces
   // isNumCoordAdjacent
-  assert.is(EX.reduce(partsSum, 0), 4361);
+  const adjacencies = getAdjacencies(EX);
+  const sum = adjacencies.reduce(
+    (acc, vals) =>
+      acc + vals.reduce((inner: number, val: number) => inner + val, 0),
+    0,
+  );
+
+  assert.is(sum, 4361);
 });
 test("p1", async () => {
-  const sum = data.reduce(partsSum, 0);
+  const adjacencies = getAdjacencies();
+  const sum = adjacencies.reduce(
+    (acc, vals) =>
+      acc + vals.reduce((inner: number, val: number) => inner + val, 0),
+    0,
+  );
   assert.ok(sum > 506033);
   assert.is(sum, 553825);
   assert.ok(sum < 556290);
-  console.log(await time(() => data.reduce(partsSum, 0)));
+  console.log(await time(getAdjacencies.bind(this)));
 });
+
+test("p2 example", () => {
+  const adjacencies = getAdjacencies(EX, "?<symbol>\\*");
+  const sum = adjacencies.reduce((acc, vals) => {
+    if (vals.length !== 2) {
+      return acc;
+    }
+    return acc + vals[0] * vals[1];
+  }, 0);
+
+  assert.is(sum, 467835);
+});
+
+test("p2", async () => {
+  const adjacencies = getAdjacencies(data, "?<symbol>\\*");
+  const sum = adjacencies.reduce((acc, vals) => {
+    if (vals.length !== 2) {
+      return acc;
+    }
+    return acc + vals[0] * vals[1];
+  }, 0);
+
+  assert.is(sum, 93994191);
+  console.log(await time(getAdjacencies.bind(this, data, "?<symbol>\\*")));
+});
+
+type Coord = readonly [number, number];
+
+function getAdjacencies(
+  lines = data,
+  symbolPattern = "?<symbol>[^.0-9]",
+): number[][] {
+  const nums: [Coord, string][] = [];
+  const symbols: [Coord, string][] = [];
+  const matchPattern = new RegExp(`(${symbolPattern})|(?<num>\\d+)`, "g");
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    [...line.matchAll(matchPattern)].forEach((match) => {
+      const coord = [i, match.index] as const;
+      if (match.groups.symbol) {
+        symbols.push([coord, match[0]]);
+      }
+      if (match.groups.num) {
+        nums.push([coord, match[0]]);
+      }
+    });
+  }
+  const adjacencies: number[][] = [];
+  symbols.forEach(([[x, y]], id) => {
+    adjacencies[id] = [];
+    nums.forEach(([[i, j], num]) => {
+      const rowDelta = Math.abs(i - x);
+      if (rowDelta <= 1) {
+        const colDelta = (col: number) => Math.abs(y - col);
+        const offset = num.length - 1;
+        if (colDelta(j) <= 1 || colDelta(j + offset) <= 1) {
+          adjacencies[id].push(Number(num));
+        }
+      }
+    });
+  });
+  return adjacencies;
+}
 
 test.run();
